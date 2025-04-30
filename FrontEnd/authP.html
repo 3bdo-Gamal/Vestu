@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vestu - Modern Clothing Store</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+--primary: #3a86ff;
+--primary-dark: #2a75ee;
+--secondary: #f8f9fa;
+--dark: #212529;
+--light-gray: #e9ecef;
+--medium-gray: #adb5bd;
+--white: #ffffff;
+--success: #28a745;
+--shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+--transition: all 0.3s ease;
+}
+
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+background-color: var(--secondary);
+color: var(--dark);
+line-height: 1.6;
+}
+
+.container {
+width: 100%;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 15px;
+}
+
+/* Header Styles */
+header {
+background-color: var(--white);
+box-shadow: var(--shadow);
+position: sticky;
+top: 0;
+z-index: 1000;
+}
+
+.header-container {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 15px 0;
+}
+
+.logo {
+font-size: 28px;
+font-weight: bold;
+color: var(--primary);
+}
+
+.logo span {
+color: var(--dark);
+}
+
+.search-bar {
+display: flex;
+width: 40%;
+position: relative;
+}
+
+.search-bar input {
+width: 100%;
+padding: 10px 15px;
+border: 1px solid var(--light-gray);
+border-radius: 4px 0 0 4px;
+outline: none;
+transition: var(--transition);
+}
+
+.search-bar input:focus {
+border-color: var(--primary);
+}
+
+.search-bar button {
+background-color: var(--primary);
+color: var(--white);
+border: none;
+padding: 0 15px;
+border-radius: 0 4px 4px 0;
+cursor: pointer;
+transition: var(--transition);
+}
+
+.search-bar button:hover {
+background-color: var(--primary-dark);
+}
+
+.nav-icons {
+display: flex;
+gap: 20px;
+}
+
+.nav-icon {
+position: relative;
+color: var(--dark);
+text-decoration: none;
+font-size: 1.2rem;
+transition: var(--transition);
+}
+
+.nav-icon:hover {
+color: var(--primary);
+}
+
+.nav-icon span {
+position: absolute;
+top: -8px;
+right: -8px;
+background-color: var(--primary);
+color: var(--white);
+font-size: 0.7rem;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+nav {
+background-color: var(--white);
+border-top: 1px solid var(--light-gray);
+}
+
+.nav-links {
+display: flex;
+justify-content: center;
+list-style: none;
+gap: 30px;
+padding: 15px 0;
+}
+
+.nav-links a {
+text-decoration: none;
+color: var(--dark);
+font-weight: 500;
+transition: var(--transition);
+}
+
+.nav-links a:hover {
+color: var(--primary);
+}
+
+/* Auth Pages */
+.auth-page {
+padding: 60px 0;
+background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+min-height: calc(100vh - 120px);
+display: flex;
+align-items: center;
+}
+
+.auth-container {
+max-width: 900px;
+margin: 0 auto;
+}
+
+.auth-wrapper {
+display: flex;
+background-color: var(--white);
+border-radius: 10px;
+overflow: hidden;
+box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.auth-sidebar {
+width: 40%;
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+padding: 40px;
+color: white;
+display: flex;
+flex-direction: column;
+justify-content: center;
+}
+
+.auth-sidebar h2 {
+font-size: 28px;
+margin-bottom: 20px;
+}
+
+.auth-sidebar p {
+margin-bottom: 30px;
+opacity: 0.9;
+line-height: 1.7;
+}
+
+.auth-benefits {
+list-style: none;
+}
+
+.auth-benefits li {
+margin-bottom: 15px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.auth-benefits i {
+color: #4ade80;
+}
+
+.auth-form-container {
+width: 60%;
+padding: 40px;
+position: relative;
+}
+
+.auth-title {
+text-align: center;
+margin-bottom: 30px;
+color: var(--dark);
+font-size: 24px;
+}
+
+.auth-tabs {
+display: flex;
+margin-bottom: 30px;
+border-bottom: 1px solid var(--light-gray);
+}
+
+.auth-tab {
+flex: 1;
+text-align: center;
+padding: 15px;
+cursor: pointer;
+transition: var(--transition);
+font-weight: 500;
+}
+
+.auth-tab.active {
+border-bottom: 2px solid var(--primary);
+color: var(--primary);
+}
+
+.auth-tab a {
+text-decoration: none;
+color: inherit;
+display: block;
+width: 100%;
+}
+
+.auth-form {
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+.form-row {
+display: flex;
+gap: 15px;
+}
+
+.form-row .form-group {
+flex: 1;
+}
+
+.form-group label {
+font-weight: 500;
+color: var(--dark);
+font-size: 14px;
+}
+
+.form-group input, 
+.form-group select {
+padding: 12px 15px;
+border: 1px solid var(--light-gray);
+border-radius: 6px;
+transition: var(--transition);
+font-size: 15px;
+}
+
+.form-group input:focus {
+border-color: var(--primary);
+box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+outline: none;
+}
+
+.form-options {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 5px;
+}
+
+.remember-me {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.remember-me input[type="checkbox"] {
+width: 16px;
+height: 16px;
+accent-color: var(--primary);
+}
+
+.forgot-password {
+color: var(--primary);
+text-decoration: none;
+font-size: 14px;
+transition: var(--transition);
+}
+
+.forgot-password:hover {
+text-decoration: underline;
+}
+
+.btn {
+padding: 12px 20px;
+border: none;
+border-radius: 6px;
+font-weight: 500;
+cursor: pointer;
+transition: var(--transition);
+text-align: center;
+font-size: 16px;
+}
+
+.auth-btn {
+background-color: var(--primary);
+color: var(--white);
+margin-top: 15px;
+width: 100%;
+}
+
+.auth-btn:hover {
+background-color: var(--primary-dark);
+transform: translateY(-2px);
+}
+
+.auth-forms {
+position: relative;
+min-height: 450px;
+}
+
+.login-form, 
+.register-form {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+opacity: 0;
+visibility: hidden;
+transform: translateY(20px);
+transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+
+.login-form.active,
+.register-form.active {
+opacity: 1;
+visibility: visible;
+transform: translateY(0);
+}
+
+.auth-footer {
+margin-top: 25px;
+text-align: center;
+font-size: 14px;
+}
+
+.auth-footer a {
+color: var(--primary);
+text-decoration: none;
+font-weight: 500;
+}
+
+.auth-footer a:hover {
+text-decoration: underline;
+}
+
+/* Footer Styles */
+footer {
+background-color: var(--dark);
+color: var(--white);
+padding: 50px 0 20px;
+}
+
+.footer-columns {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 30px;
+margin-bottom: 40px;
+}
+
+.footer-column h3 {
+font-size: 18px;
+margin-bottom: 20px;
+position: relative;
+}
+
+.footer-column h3::after {
+content: '';
+position: absolute;
+left: 0;
+bottom: -8px;
+width: 40px;
+height: 2px;
+background-color: var(--primary);
+}
+
+.footer-links {
+list-style: none;
+}
+
+.footer-links li {
+margin-bottom: 10px;
+}
+
+.footer-links a {
+color: var(--medium-gray);
+text-decoration: none;
+transition: var(--transition);
+}
+
+.footer-links a:hover {
+color: var(--white);
+padding-left: 5px;
+}
+
+.copyright {
+text-align: center;
+padding-top: 20px;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+color: var(--medium-gray);
+font-size: 14px;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+.search-bar {
+width: 35%;
+}
+}
+
+@media (max-width: 768px) {
+.auth-wrapper {
+flex-direction: column;
+}
+
+.auth-sidebar, 
+.auth-form-container {
+width: 100%;
+}
+
+.search-bar {
+display: none;
+}
+
+.nav-links {
+flex-wrap: wrap;
+gap: 15px;
+}
+}
+
+@media (max-width: 576px) {
+.form-row {
+flex-direction: column;
+}
+
+.auth-sidebar {
+padding: 30px 20px;
+}
+
+.auth-form-container {
+padding: 30px 20px;
+}
+}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container header-container">
+      <div class="logo">V<span>estu</span></div>
+      <div class="search-bar">
+        <input type="text" placeholder="Search for products...">
+        <button><i class="fas fa-search"></i></button>
+      </div>
+      <div class="nav-icons">
+        <a href="#" class="nav-icon">
+          <i class="fas fa-user"></i>
+        </a>
+        <a href="cart.html" class="nav-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span>3</span>
+        </a>
+      </div>
+    </div>
+    <nav>
+      <div class="container">
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="products.html?category=denim">Denim Collection</a></li>
+          <li><a href="products.html?category=oversized">Oversized Essentials</a></li>
+          <li><a href="products.html?category=polo">Classic Polo</a></li>
+          <li><a href="products.html?category=basics">Everyday Basics</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  
+  <section class="auth-page">
+    <div class="container">
+      <div class="auth-container">
+        <div class="auth-wrapper">
+          <!-- Sidebar -->
+          <div class="auth-sidebar">
+            <h2>Welcome to Vestu</h2>
+            <ul class="auth-benefits">
+              <li><i class="fas fa-check-circle"></i> Early access to new collections</li>
+              <li><i class="fas fa-check-circle"></i> Special and new designs</li>
+              <li><i class="fas fa-check-circle"></i> Free shipping on orders over $100</li>
+              <li><i class="fas fa-check-circle"></i> Have fun in the website</li>
+            </ul>
+          </div>
+
+          
+          <div class="auth-form-container">
+            <h1 class="auth-title">Account Access</h1>
+
+           
+            <div class="auth-tabs">
+              <div class="auth-tab active" id="login-tab">Login</div>
+              <div class="auth-tab" id="register-tab">Register</div>
+            </div>
+
+           
+            <div class="auth-forms">
+              
+              <form class="auth-form login-form active">
+                <div class="form-group">
+                  <label for="login-email">Email Address</label>
+                  <input type="email" id="login-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                  <label for="login-password">Password</label>
+                  <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-options">
+                  <div class="remember-me">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember me</label>
+                  </div>
+                  <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn auth-btn">Login</button>
+                <div class="auth-footer">
+                  <p>Don't have an account? <a href="#" id="switch-to-register">Register</a></p>
+                </div>
+              </form>
+
+              
+              <form class="auth-form register-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="first-name">First Name</label>
+                    <input type="text" id="first-name" placeholder="Enter your first name" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="last-name">Last Name</label>
+                    <input type="text" id="last-name" placeholder="Enter your last name" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="register-email">Email Address</label>
+                  <input type="email" id="register-email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                  <label for="register-password">Password</label>
+                  <input type="password" id="register-password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                  <label for="confirm-password">Confirm Password</label>
+                  <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <div class="form-options">
+                  <div class="remember-me">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="terms.html">Terms & Conditions</a></label>
+                  </div>
+                </div>
+                <button type="submit" class="btn auth-btn">Register</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+  <footer>
+    <div class="container">
+      <div class="footer-columns">
+        <div class="footer-column">
+          <h3>Shop</h3>
+          <ul class="footer-links">
+            <li><a href="products.html?category=denim">Denim Collection</a></li>
+            <li><a href="products.html?category=oversized">Oversized Essentials</a></li>
+            <li><a href="products.html?category=polo">Classic Polo</a></li>
+            <li><a href="products.html?category=basics">Everyday Basics</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Customer Service</h3>
+          <ul class="footer-links">
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="faq.html">FAQs</a></li>
+            <li><a href="shipping.html">Shipping & Returns</a></li>
+            <li><a href="size-guide.html">Size Guide</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">
+        &copy; 2025 Vestu. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  
+  <script>
+    const loginTab = document.getElementById("login-tab");
+    const registerTab = document.getElementById("register-tab");
+    const loginForm = document.querySelector(".login-form");
+    const registerForm = document.querySelector(".register-form");
+
+    loginTab.addEventListener("click", () => {
+      loginTab.classList.add("active");
+      registerTab.classList.remove("active");
+      loginForm.classList.add("active");
+      registerForm.classList.remove("active");
+    });
+
+    registerTab.addEventListener("click", () => {
+      registerTab.classList.add("active");
+      loginTab.classList.remove("active");
+      registerForm.classList.add("active");
+      loginForm.classList.remove("active");
+    });
+
+    document.getElementById("switch-to-register").addEventListener("click", (e) => {
+      e.preventDefault();
+      registerTab.click();
+    });
+
+    document.getElementById("switch-to-login").addEventListener("click", (e) => {
+      e.preventDefault();
+      loginTab.click();
+    });
+  </script>
+</body>
+</html>
