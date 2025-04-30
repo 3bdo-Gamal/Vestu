@@ -1,25 +1,37 @@
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+require('dotenv').config();
+
 const app = express();
 
-// Middleware
-app.use(express.json());
-
-// Serve static frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-// API routes
-app.use('/api/products', require('./routes/productRoutes'));
-app.use('/api/cart', require('./routes/cartRoutes'));
-// Add more as needed...
-
-// Fallback for SPA routing (optional)
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+// Connect to MongoDB Atlas
+mongoose.connect(process.env.Mongo_URI, {
+})
+.then(() => console.log('✅ Connected to MongoDB Atlas'))
+.catch((err) => {
+  console.error('❌ MongoDB connection failed:', err.message);
+  process.exit(1);
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
+// Middleware
+
+app.use(express.json());
+app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: true }));
+
+// API routes
+app.use('/api/auth', require('./routes/authRoutes'));
+
+
+
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/authP.html'));
+});
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
