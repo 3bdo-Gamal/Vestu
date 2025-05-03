@@ -6,34 +6,27 @@ require('dotenv').config();
 
 const app = express();
 
-// Connect to MongoDB Atlas
-mongoose.connect(process.env.Mongo_URI, {
-})
-.then(() => console.log('✅ Connected to MongoDB Atlas'))
-.catch((err) => {
-  console.error('❌ MongoDB connection failed:', err.message);
-  process.exit(1);
-});
+mongoose.connect(process.env.Mongo_URI, {})
+  .then(() => console.log('✅ Connected to MongoDB Atlas'))
+  .catch((err) => {
+    console.error('❌ MongoDB connection failed:', err.message);
+    process.exit(1);
+  });
 
-// Middleware to serve static files from the FrontEnd directory
 app.use(express.static(path.join(__dirname, '../FrontEnd')));
-
-
-// Middleware
 app.use(express.json());
-app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
-// API routes
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/user', require('./routes/userRoutes'));
+app.use('/api/orders', require('./routes/orderRoutes'));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/authP.html'));
+  res.sendFile(path.join(__dirname, '../FrontEnd/authP.html'));
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
-
-
