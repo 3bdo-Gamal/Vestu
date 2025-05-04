@@ -24,13 +24,6 @@ const productSchema = new mongoose.Schema({
     type: Number, 
     default: 0 
   },
-  sizes: [{ 
-    type: String 
-  }], // ["S", "M", "L"]
-  colors: [{ 
-    type: String, 
-    enum: ["Black", "White"] 
-  }], 
   featured: { 
     type: Boolean, 
     default: false 
