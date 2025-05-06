@@ -14,6 +14,7 @@ mongoose.connect(process.env.Mongo_URI, {})
   });
 
 app.use(express.static(path.join(__dirname, '../FrontEnd')));
+app.use('/images', express.static(path.join(__dirname, '../FrontEnd/images')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -21,14 +22,31 @@ app.use(morgan('dev'));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
+<<<<<<< HEAD
 app.use('/api/products', require('./routes/productRoutes'));  
 app.use('/api/admin', require('./routes/adminRoutes'));
+=======
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/categories', require('./routes/categoryRoutes'));
+>>>>>>> nouran
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../FrontEnd/authP.html'));
 });
+// homepageeeeeee
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../FrontEnd/index.html'));
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
+
+
+
+
+
+
+
