@@ -1078,271 +1078,187 @@
 
   <!-- JavaScript -->
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // Mobile menu toggle
-      const menuToggle = document.querySelector('.menu-toggle');
-      const navLinks = document.querySelector('.nav-links');
+    document.addEventListener('DOMContentLoaded', async function () {
+  const token = localStorage.getItem('token');
+  const headers = {
+    'Authorization': `Bearer ${token}`
+  };
 
-      if (menuToggle && navLinks) {
-        menuToggle.addEventListener('click', function () {
-          navLinks.classList.toggle('active');
-        });
+  // Mobile menu toggle
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navLinks = document.querySelector('.nav-links');
+
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', function () {
+      navLinks.classList.toggle('active');
+    });
+  }
+
+  // Tab switching logic
+  const tabs = document.querySelectorAll('.admin-tab');
+  const tabContents = document.querySelectorAll('.admin-tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function () {
+      tabs.forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      tabContents.forEach(content => content.classList.remove('active'));
+      const tabId = this.getAttribute('data-tab');
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
+
+  // Fetch and render products
+  async function loadProducts() {
+    try {
+      const res = await fetch('/api/admin/products', { headers });
+      const products = await res.json();
+      const productTable = document.querySelector('.product-table tbody');
+      productTable.innerHTML = '';
+      products.forEach((product, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${product._id}</td>
+          <td>${product.name}</td>
+          <td>${product.category}</td>
+          <td>$${product.price}</td>
+          <td>${product.stock}</td>
+          <td><span class="${product.featured ? 'featured-check' : 'featured-dash'}">${product.featured ? '✓' : '-'}</span></td>
+          <td class="actions">
+            <a href="#" class="edit-btn">Edit</a>
+            <a href="#" class="delete-btn">Delete</a>
+          </td>
+        `;
+        productTable.appendChild(row);
+        row.querySelector('.delete-btn').addEventListener('click', () => deleteProduct(product._id));
+        row.querySelector('.edit-btn').addEventListener('click', () => editProduct(product));
+      });
+    } catch (err) {
+      console.error('Failed to load products:', err);
+    }
+  }
+
+  async function deleteProduct(productId) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    try {
+      await fetch(`/api/admin/products/${productId}`, {
+        method: 'DELETE',
+        headers
+      });
+      alert('Product deleted');
+      loadProducts();
+    } catch (err) {
+      alert('Failed to delete product');
+    }
+  }
+
+  function editProduct(product) {
+    document.querySelector('[data-tab="add-product"]').click();
+    document.getElementById('product-name').value = product.name;
+    document.getElementById('product-category').value = product.category;
+    document.getElementById('product-price').value = product.price;
+    document.getElementById('product-stock').value = product.stock;
+    document.getElementById('product-featured').value = product.featured ? 'true' : 'false';
+    document.getElementById('product-description').value = product.description;
+    const submitBtn = document.querySelector('.admin-form-submit');
+    submitBtn.textContent = 'Update Product';
+    submitBtn.dataset.editId = product._id;
+  }
+
+  const addProductForm = document.getElementById('product-form');
+  if (addProductForm) {
+    addProductForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('name', document.getElementById('product-name').value);
+      formData.append('category', document.getElementById('product-category').value);
+      formData.append('price', document.getElementById('product-price').value);
+      formData.append('stock', document.getElementById('product-stock').value);
+      formData.append('featured', document.getElementById('product-featured').value);
+      formData.append('description', document.getElementById('product-description').value);
+
+      const imageFiles = document.getElementById('product-images').files;
+      for (let i = 0; i < imageFiles.length; i++) {
+        formData.append('images', imageFiles[i]);
       }
 
-      // Tab switching logic
-      const tabs = document.querySelectorAll('.admin-tab');
-      const tabContents = document.querySelectorAll('.admin-tab-content');
-      
-      tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-          // Remove active class from all tabs
-          tabs.forEach(t => t.classList.remove('active'));
-          // Add active class to clicked tab
-          this.classList.add('active');
-          
-          // Hide all tab contents
-          tabContents.forEach(content => content.classList.remove('active'));
-          
-          // Show the corresponding tab content
-          const tabId = this.getAttribute('data-tab');
-          document.getElementById(tabId).classList.add('active');
+      const isEdit = this.querySelector('.admin-form-submit').dataset.editId;
+      const url = isEdit ? `/api/admin/products/${isEdit}` : '/api/admin/products';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      try {
+        await fetch(url, {
+          method,
+          headers: { 'Authorization': `Bearer ${token}` },
+          body: formData
         });
-      });
-      
-      // Add product form submission
-      const addProductForm = document.getElementById('product-form');
-      if (addProductForm) {
-        addProductForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          
-          // Get form values
-          const productName = document.getElementById('product-name').value;
-          const productCategory = document.getElementById('product-category').value;
-          const productPrice = document.getElementById('product-price').value;
-          const productStock = document.getElementById('product-stock').value;
-          const productFeatured = document.getElementById('product-featured').value;
-          const productDescription = document.getElementById('product-description').value;
-          
-          // Get image files (would be handled by backend file upload in a real app)
-          const imageFiles = document.getElementById('product-images').files;
-          const imageFilesCount = imageFiles.length;
-          
-          // Form validation
-          if (!productName || !productCategory || !productPrice) {
-            alert('Please fill in all required fields');
-            return;
-          }
-          
-          // Here you would normally send this data to your backend
-          console.log('Product submitted:', {
-            name: productName,
-            description: productDescription,
-            price: Number(productPrice),
-            category: productCategory,
-            stock: Number(productStock) || 0,
-            featured: productFeatured === 'true',
-            images: `${imageFilesCount} images selected (would be uploaded to server)`
-          });
-          
-          // Add product to the table for demonstration
-          const productsTab = document.querySelector('[data-tab="products"]');
-          const productTable = document.querySelector('.product-table tbody');
-          
-          if (productTable) {
-            const newRow = document.createElement('tr');
-            const lastId = productTable.rows.length + 1;
-            
-            newRow.innerHTML = `
-              <td>${lastId}</td>
-              <td>${productName}</td>
-              <td>${productCategory}</td>
-              <td>$${productPrice}</td>
-              <td>${productStock || 0}</td>
-              <td><span class="${productFeatured === 'true' ? 'featured-check' : 'featured-dash'}">${productFeatured === 'true' ? '✓' : '-'}</span></td>
-              <td class="actions">
-                <a href="#" class="edit-btn">Edit</a>
-                <a href="#" class="delete-btn">Delete</a>
-              </td>
-            `;
-            
-            productTable.appendChild(newRow);
-            
-            // Add event listeners to new buttons
-            const newDeleteBtn = newRow.querySelector('.delete-btn');
-            const newEditBtn = newRow.querySelector('.edit-btn');
-            
-            if (newDeleteBtn) {
-              newDeleteBtn.addEventListener('click', handleDeleteProduct);
-            }
-            
-            if (newEditBtn) {
-              newEditBtn.addEventListener('click', handleEditProduct);
-            }
-          }
-          
-          // Reset form
-          addProductForm.reset();
-          
-          // Switch to products tab to show the new product
-          productsTab.click();
-          
-          // Show success message
-          alert('Product added successfully!');
-        });
+        alert(`Product ${isEdit ? 'updated' : 'added'} successfully!`);
+        this.reset();
+        loadProducts();
+        document.querySelector('[data-tab="products"]').click();
+      } catch (err) {
+        alert(`Failed to ${isEdit ? 'update' : 'add'} product`);
       }
-      
-      // Delete product handler function
-      function handleDeleteProduct(e) {
-        e.preventDefault();
-        
-        // Get the product row
-        const row = this.closest('tr');
-        const productId = row.querySelector('td').textContent;
-        const productName = row.querySelectorAll('td')[1].textContent;
-        
-        // Confirm deletion
-        if (confirm(`Are you sure you want to delete "${productName}" (ID: ${productId})?`)) {
-          // Here you would normally send a delete request to your backend
-          console.log('Deleting product ID:', productId);
-          
-          // Remove the row from the table
-          row.remove();
-        }
-      }
-      
-      // Edit product handler function
-      function handleEditProduct(e) {
-        e.preventDefault();
-        
-        // Get product data
-        const row = this.closest('tr');
-        const cells = row.querySelectorAll('td');
-        
-        const productId = cells[0].textContent;
-        const productName = cells[1].textContent;
-        const productCategory = cells[2].textContent;
-        const productPrice = cells[3].textContent.replace('$', '');
-        const productStock = cells[4].textContent;
-        const productFeatured = cells[5].querySelector('.featured-check') ? 'true' : 'false';
-        
-        // Switch to add product tab
-        document.querySelector('[data-tab="add-product"]').click();
-        
-        // Populate form with product data
-        document.getElementById('product-name').value = productName;
-        
-        const categorySelect = document.getElementById('product-category');
-        for (let i = 0; i < categorySelect.options.length; i++) {
-          if (categorySelect.options[i].value === productCategory) {
-            categorySelect.selectedIndex = i;
-            break;
-          }
-        }
-        
-        document.getElementById('product-price').value = productPrice;
-        document.getElementById('product-stock').value = productStock;
-        
-        const featuredSelect = document.getElementById('product-featured');
-        featuredSelect.value = productFeatured;
-        
-        // Change form submit button text to "Update Product"
-        const submitBtn = document.querySelector('.admin-form-submit');
-        if (submitBtn) {
-          submitBtn.textContent = 'Update Product';
-          
-          // Store original product ID for update
-          submitBtn.dataset.editId = productId;
-        }
-      }
-      
-      // Add event listeners to existing delete buttons
-      const deleteButtons = document.querySelectorAll('.delete-btn');
-      deleteButtons.forEach(button => {
-        button.addEventListener('click', handleDeleteProduct);
+    });
+  }
+
+  // Edit order status functionality
+  const editStatusButtons = document.querySelectorAll('.edit-status-btn');
+  editStatusButtons.forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+      const row = this.closest('tr');
+      const orderId = row.querySelector('td').textContent;
+      const statusCell = row.querySelector('.order-status');
+      const currentStatus = statusCell.textContent;
+      const statusOptions = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+      const statusSelect = document.createElement('select');
+      statusSelect.className = 'status-select';
+      statusOptions.forEach(status => {
+        const option = document.createElement('option');
+        option.value = status;
+        option.textContent = status;
+        if (status === currentStatus) option.selected = true;
+        statusSelect.appendChild(option);
       });
-      
-      // Add event listeners to existing edit buttons
-      const editButtons = document.querySelectorAll('.edit-btn');
-      editButtons.forEach(button => {
-        button.addEventListener('click', handleEditProduct);
-      });
-      
-      // Edit order status functionality
-      const editStatusButtons = document.querySelectorAll('.edit-status-btn');
-      editStatusButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          
-          // Get the order row
-          const row = this.closest('tr');
-          const orderId = row.querySelector('td').textContent;
-          const statusCell = row.querySelector('.order-status');
-          const currentStatus = statusCell.textContent;
-          
-          // Create the status dropdown
-          const statusOptions = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-          const statusSelect = document.createElement('select');
-          statusSelect.className = 'status-select';
-          
-          statusOptions.forEach(status => {
-            const option = document.createElement('option');
-            option.value = status;
-            option.textContent = status;
-            if (status === currentStatus) {
-              option.selected = true;
-            }
-            statusSelect.appendChild(option);
+
+      const saveButton = document.createElement('button');
+      saveButton.textContent = 'Save';
+      saveButton.className = 'status-save-btn';
+
+      const statusContainer = document.createElement('div');
+      statusContainer.appendChild(statusSelect);
+      statusContainer.appendChild(saveButton);
+
+      const originalContent = statusCell.innerHTML;
+      statusCell.innerHTML = '';
+      statusCell.appendChild(statusContainer);
+
+      saveButton.addEventListener('click', async function () {
+        const newStatus = statusSelect.value;
+        try {
+          await fetch(`/api/admin/orders/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
           });
-          
-          // Create a save button
-          const saveButton = document.createElement('button');
-          saveButton.textContent = 'Save';
-          saveButton.className = 'status-save-btn';
-          saveButton.style.marginLeft = '8px';
-          saveButton.style.padding = '2px 8px';
-          saveButton.style.backgroundColor = '#333';
-          saveButton.style.color = 'white';
-          saveButton.style.border = 'none';
-          saveButton.style.borderRadius = '4px';
-          saveButton.style.cursor = 'pointer';
-          
-          // Replace the status with the dropdown and save button
-          const statusContainer = document.createElement('div');
-          statusContainer.style.display = 'flex';
-          statusContainer.style.alignItems = 'center';
-          statusContainer.appendChild(statusSelect);
-          statusContainer.appendChild(saveButton);
-          
-          // Store the original content to restore if needed
-          const originalContent = statusCell.innerHTML;
-          statusCell.innerHTML = '';
-          statusCell.appendChild(statusContainer);
-          
-          // Handle save button click
-          saveButton.addEventListener('click', function() {
-            const newStatus = statusSelect.value;
-            
-            // Update the display with the new status
-            statusCell.innerHTML = '';
-            const newStatusSpan = document.createElement('span');
-            newStatusSpan.className = `order-status status-${newStatus}`;
-            newStatusSpan.textContent = newStatus;
-            statusCell.appendChild(newStatusSpan);
-            
-            // Here you would normally send the status update to your backend
-            console.log(`Updated order ${orderId} status to: ${newStatus}`);
-          });
-          
-          // Handle clicks outside to cancel
-          document.addEventListener('click', function cancelEdit(event) {
-            if (!statusContainer.contains(event.target) && !button.contains(event.target)) {
-              statusCell.innerHTML = originalContent;
-              document.removeEventListener('click', cancelEdit);
-            }
-          });
-        });
+          alert('Order status updated');
+          statusCell.innerHTML = `<span class="order-status status-${newStatus}">${newStatus}</span>`;
+        } catch (err) {
+          alert('Failed to update order status');
+          statusCell.innerHTML = originalContent;
+        }
       });
     });
+  });
+
+  // Initial load
+  loadProducts();
+});
   </script>
 </body>
 </html>
