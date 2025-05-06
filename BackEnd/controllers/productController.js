@@ -1,4 +1,4 @@
-// HEAD
+
 // controllers/productController.js
 
 const Product = require('../models/Product');
@@ -81,7 +81,7 @@ exports.getProductsByCategory = async (req, res) => {
     res.status(500).json({ error: 'Error retrieving products by category' });
   }
 }
-//=======
+
 const Product = require('../models/Product');
 
 exports.getAllProducts = async (req, res) => {

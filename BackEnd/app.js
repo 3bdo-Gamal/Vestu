@@ -22,13 +22,11 @@ app.use(morgan('dev'));
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
-<<<<<<< HEAD
-app.use('/api/products', require('./routes/productRoutes'));  
+app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
-=======
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
->>>>>>> nouran
+
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../FrontEnd/authP.html'));
