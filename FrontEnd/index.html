@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vestu - Modern Clothing Store</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">V<span>estu</span></div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="nav-icons">
+                <a href="login.html" class="nav-icon">
+                    <i class="fas fa-user"></i>
+                </a>
+
+                <a href="cart.html" class="nav-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>3</span>
+                </a>
+            </div>
+        </div>
+
+        <nav>
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html?category=denim">Denim Collection</a></li>
+                    <li><a href="products.html?category=oversized">Oversized Essentials</a></li>
+                    <li><a href="products.html?category=polo">Classic Polo</a></li>
+                    <li><a href="products.html?category=basics">Everyday Basics</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Summer Collection 2025</h1>
+                <p>Discover the latest trends and styles for the upcoming summer season.</p>
+                <a href="products.html" class="btn">Shop Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Categories -->
+    <section class="featured-categories">
+        <div class="container">
+            <h2 class="section-title">Shop by Category</h2>
+            <div class="categories">
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-products">
+        <div class="container">
+            <h2 class="section-title">Featured Products</h2>
+            <div class="products">
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3>Shop</h3>
+                    <ul class="footer-links">
+                        <li><a href="products.html?category=denim">Denim Collection</a></li>
+                        <li><a href="products.html?category=oversized">Oversized Essentials</a></li>
+                        <li><a href="products.html?category=polo">Classic Polo</a></li>
+                        <li><a href="products.html?category=basics">Everyday Basics</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul class="footer-links">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="faq.html">FAQs</a></li>
+                        <li><a href="shipping.html">Shipping & Returns</a></li>
+                        <li><a href="size-guide.html">Size Guide</a></li>
+                        <li><a href="track-order.html">Track Order</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>About Us</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Our Story</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                        <li><a href="press.html">Press</a></li>
+                        <li><a href="sustainability.html">Sustainability</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="cookies.html">Cookie Policy</a></li>
+                        <li><a href="terms-of-use.html">Terms of Use</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="copyright">
+                © 2025 Vestu. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function loadFeaturedProducts() {
+            try {
+                const res = await fetch('http://localhost:3000/api/products/featured');
+                const products = await res.json();
+                console.log('Featured Products from API:', products);
+
+                const container = document.querySelector('.products');
+                container.innerHTML = '';
+
+                products.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.innerHTML = `
+            <a href="product.html?id=${product.id}" class="product-img">
+              <img src="${product.image}" alt="${product.name}">
+            </a>
+            <div class="product-info">
+              <div class="product-title">${product.name}</div>
+              <div class="product-price">$${product.price}</div>
+              <div class="product-rating">★★★★☆</div>
+              <div class="product-actions">
+                <button class="add-to-cart">Add to Cart</button>
+                <button class="wishlist"><i class="fas fa-heart"></i></button>
+              </div>
+            </div>
+          `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Error loading featured products:', error);
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const res = await fetch('http://localhost:3000/api/categories');
+                const categories = await res.json();
+                console.log('Categories from API:', categories);
+
+                const container = document.querySelector('.categories');
+                container.innerHTML = '';
+
+                categories.forEach(cat => {
+                    const name = cat.name;
+                    const slug = cat.slug;
+                    const image = cat.image;
+
+                    const card = document.createElement("a");
+                    card.className = "category-card";
+                    card.href = `products.html?category=${slug}`;
+                    card.innerHTML = `
+            <img src="${image}" alt="${name}">
+            <div class="overlay"><h3>${name}</h3></div>
+          `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error loading categories:", error);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFeaturedProducts();
+            loadCategories();
+        });
+    </script>
+
+</body>
+
+</html>
