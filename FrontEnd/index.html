@@ -22,9 +22,10 @@
             </div>
 
             <div class="nav-icons">
-                <a href="login.html" class="nav-icon">
+                <a id="user-link" href="authP.html" class="nav-icon">
                     <i class="fas fa-user"></i>
                 </a>
+                
 
                 <a href="cart.html" class="nav-icon">
                     <i class="fas fa-shopping-cart"></i>
@@ -198,8 +199,43 @@
             loadFeaturedProducts();
             loadCategories();
         });
+
+
+
+        window.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userLink = document.getElementById("user-link");
+
+    if (user) {
+        // لو المستخدم مسجل دخول، نوجهه لصفحة البروفايل
+        userLink.href = "profile.html";
+    } else {
+        // لو مش مسجل دخول، يبقى يروح للوج ان
+        userLink.href = "authP.html";
+    }
+
+    // تحميل المنتجات والفئات
+    loadFeaturedProducts();
+    loadCategories();
+});
+
     </script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userLink = document.getElementById("user-link");
+
+    if (user && user.email) {
+      userLink.href = "profile.html";
+    } else {
+      userLink.href = "authP.html";
+    }
+  });
+</script>
 
 </body>
 
 </html>
+

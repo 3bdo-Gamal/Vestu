@@ -6,6 +6,10 @@
   <title>Vestu - Modern Clothing Store</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <style>
+
+
+
+
     :root {
 --primary: #3a86ff;
 --primary-dark: #2a75ee;
@@ -346,11 +350,11 @@ width: 100%;
 background-color: var(--primary-dark);
 transform: translateY(-2px);
 }
-
 .auth-forms {
-position: relative;
-min-height: 450px;
+  position: relative;
+  min-height: 550px;  /* يسمح بتمدد الطول */
 }
+
 
 .login-form, 
 .register-form {
@@ -593,13 +597,28 @@ padding: 30px 20px;
                   <label for="confirm-password">Confirm Password</label>
                   <input type="password" id="confirm-password" placeholder="Confirm your password" required>
                 </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" placeholder="Enter your phone number" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="birth-date">Date of Birth</label>
+                    <input type="date" id="birth-date" required>
+                  </div>
+                </div>
+                
+               
+                
                 <div class="form-options">
                   <div class="remember-me">
                     <input type="checkbox" id="terms" required>
                     <label for="terms">I agree to the <a href="terms.html">Terms & Conditions</a></label>
                   </div>
                 </div>
+                
                 <button type="submit" class="btn auth-btn">Register</button>
+                
               </form>
             </div>
           </div>
@@ -666,68 +685,76 @@ padding: 30px 20px;
 
   // 🔐 REGISTER FORM
   registerForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const firstName = document.getElementById("first-name").value.trim();
-    const lastName = document.getElementById("last-name").value.trim();
-    const email = document.getElementById("register-email").value.trim();
-    const password = document.getElementById("register-password").value;
-    const confirmPassword = document.getElementById("confirm-password").value;
+  const firstName = document.getElementById("first-name").value.trim();
+  const lastName = document.getElementById("last-name").value.trim();
+  const email = document.getElementById("register-email").value.trim();
+  const password = document.getElementById("register-password").value;
+  const confirmPassword = document.getElementById("confirm-password").value;
+  const phone = document.getElementById("phone").value.trim();
+  const birthDate = document.getElementById("birth-date").value;
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  const username = `${firstName}_${lastName}`.toLowerCase();
+
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password, firstName, lastName, phone, birthDate })
+    });
+
+    const data = await res.json();
+    if (res.ok) {
+      alert("✅ Registered! Please log in.");
+      loginTab.click();
+    } else {
+      alert(data.error || "Registration failed");
     }
+  } catch (err) {
+    alert("Something went wrong.");
+    console.error(err);
+  }
+});
 
-    const username = `${firstName}_${lastName}`.toLowerCase();
+ // 🔑 LOGIN FORM
+ loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password })
-      });
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value;
 
-      const data = await res.json();
-      if (res.ok) {
-        alert("✅ Registered! Please log in.");
-        loginTab.click(); // Switch to login
-      } else {
-        alert(data.error || "Registration failed");
-      }
-    } catch (err) {
-      alert("Something went wrong.");
-      console.error(err);
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      // ✅ خزّن كل البيانات
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      alert("✅ Login successful!");
+      window.location.href = "profile.html";
+    } else {
+      alert(data.error || "Login failed");
     }
-  });
+  } catch (err) {
+    alert("Something went wrong.");
+    console.error(err);
+  }
+});
 
-  // 🔑 LOGIN FORM
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
 
-    const email = document.getElementById("login-email").value.trim();
-    const password = document.getElementById("login-password").value;
-
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem('token', data.token); 
-        alert("✅ Login successful!");
-        window.location.href = "index.html"; 
-      } else {
-        alert(data.error || "Login failed");
-      }
-    } catch (err) {
-      alert("Something went wrong.");
-      console.error(err);
-    }
-  });
 
   </script>
 </body>

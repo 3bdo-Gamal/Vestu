@@ -9,9 +9,151 @@
   <style>
     .hidden { display: none; }
     .profile-menu li.active a { font-weight: bold; }
+    
+    /* Logout Button Styles */
+    .profile-menu .logout-item {
+      margin-top: 30px;
+      border-top: 1px solid #eeeeee;
+      padding-top: 15px;
+    }
+    
+    .profile-menu .logout-item a {
+      color: #dc3545;
+      transition: all 0.3s ease;
+    }
+    
+    .profile-menu .logout-item a:hover {
+      color: #bd2130;
+      text-decoration: none;
+    }
+    
+    /* Enhanced Personal Info Styles */
+    .profile-section {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .section-header h2 {
+      font-size: 1.5rem;
+      color: #333;
+      margin: 0;
+    }
+    
+    .edit-btn {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 8px 15px;
+      color: #212529;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+    }
+    
+    .edit-btn:hover {
+      background: #e9ecef;
+    }
+    
+    .edit-btn i {
+      color: #6c757d;
+    }
+    
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .info-row {
+      display: flex;
+      border-bottom: 1px solid #f1f1f1;
+      padding-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+    
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    
+    .info-label {
+      width: 30%;
+      font-weight: 600;
+      color: #495057;
+    }
+    
+    .info-value {
+      width: 70%;
+      color: #212529;
+    }
+    
+    /* Edit Mode Styles */
+    .info-row.edit-mode {
+      background-color: #f8f9fa;
+      padding: 8px;
+      border-radius: 4px;
+    }
+    
+    .info-row.edit-mode .info-value input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 0.95rem;
+    }
+    
+    .save-cancel-btns {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .save-btn, .cancel-btn {
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    .save-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+    }
+    
+    .save-btn:hover {
+      background: #218838;
+    }
+    
+    .cancel-btn {
+      background: #fff;
+      color: #6c757d;
+      border: 1px solid #ced4da;
+    }
+    
+    .cancel-btn:hover {
+      background: #f8f9fa;
+    }
   </style>
 </head>
 <body>
+
   <!-- Header -->
   <header>
     <div class="container header-container">
@@ -21,7 +163,7 @@
         <button><i class="fas fa-search"></i></button>
       </div>
       <div class="nav-icons">
-        <a href="login.html" class="nav-icon"><i class="fas fa-user"></i></a>
+        <a href="profile.html" class="nav-icon"><i class="fas fa-user"></i></a>
         <a href="wishlist.html" class="nav-icon"><i class="fas fa-heart"></i><span>2</span></a>
         <a href="cart.html" class="nav-icon"><i class="fas fa-shopping-cart"></i><span>3</span></a>
       </div>
@@ -47,16 +189,17 @@
         <!-- Sidebar -->
         <div class="profile-sidebar">
           <div class="profile-user">
-            <div class="profile-avatar">
-              <img src="https://source.unsplash.com/random/100x100/?portrait" alt="User Avatar"/>
+            <div style="margin-top: 20px;">
+              <div class="profile-name"></div>
+              <div class="profile-email"></div>
             </div>
-            <div class="profile-name"></div>
-            <div class="profile-email"></div>
+
           </div>
 
           <ul class="profile-menu">
             <li class="active"><a href="#" onclick="showSection('personal-info', this)"><i class="fas fa-user"></i> Profile</a></li>
             <li><a href="#" onclick="showSection('order-history', this)"><i class="fas fa-shopping-bag"></i> Orders</a></li>
+            <li class="logout-item"><a href="#" onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
           </ul>
         </div>
 
@@ -66,14 +209,18 @@
           <div id="personal-info" class="profile-section">
             <div class="section-header">
               <h2>Personal Information</h2>
-              <button class="edit-btn"><i class="fas fa-edit"></i> Edit</button>
+              <button class="edit-btn" onclick="toggleEditMode()"><i class="fas fa-edit"></i> Edit</button>
             </div>
-            <div class="profile-info">
-              <div class="info-row"><div class="info-label">First Name</div><div class="info-value"></div></div>
-              <div class="info-row"><div class="info-label">Last Name</div><div class="info-value"></div></div>
-              <div class="info-row"><div class="info-label">Email</div><div class="info-value"></div></div>
-              <div class="info-row"><div class="info-label">Phone</div><div class="info-value"></div></div>
-              <div class="info-row"><div class="info-label">Date of Birth</div><div class="info-value"></div></div>
+            <div class="profile-info" id="profile-info-container">
+              <div class="info-row"><div class="info-label">First Name</div><div class="info-value" id="first-name">Mohammed</div></div>
+              <div class="info-row"><div class="info-label">Last Name</div><div class="info-value" id="last-name">Ahmed</div></div>
+              <div class="info-row"><div class="info-label">Email</div><div class="info-value" id="email">mohammed@example.com</div></div>
+              <div class="info-row"><div class="info-label">Phone</div><div class="info-value" id="phone">+966 50 123 4567</div></div>
+              <div class="info-row"><div class="info-label">Date of Birth</div><div class="info-value" id="birth-date">15/08/1990</div></div>
+            </div>
+            <div class="save-cancel-btns hidden" id="edit-buttons">
+              <button class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+              <button class="save-btn" onclick="saveChanges()">Save Changes</button>
             </div>
           </div>
 
@@ -134,7 +281,9 @@
         © 2025 Vestu. All rights reserved.
       </div>
     </div>
-  </footer>
+  
+
+</footer>
 
   <!-- JS -->
   <script>
@@ -145,6 +294,257 @@
       document.querySelectorAll('.profile-menu li').forEach(li => li.classList.remove('active'));
       element.parentElement.classList.add('active');
     }
+    
+    // New functions for edit functionality
+    let originalValues = {};
+    
+    function toggleEditMode() {
+      const container = document.getElementById('profile-info-container');
+      const infoRows = container.querySelectorAll('.info-row');
+      const editButtons = document.getElementById('edit-buttons');
+      const editBtn = document.querySelector('.edit-btn');
+      
+      // Save original values
+      originalValues = {
+        firstName: document.getElementById('first-name').textContent,
+        lastName: document.getElementById('last-name').textContent,
+        email: document.getElementById('email').textContent,
+        phone: document.getElementById('phone').textContent,
+        birthDate: document.getElementById('birth-date').textContent
+      };
+      
+      // Switch to edit mode
+      editBtn.style.display = 'none';
+      editButtons.classList.remove('hidden');
+      
+      infoRows.forEach(row => {
+        const label = row.querySelector('.info-label').textContent;
+        const valueDiv = row.querySelector('.info-value');
+        const currentValue = valueDiv.textContent;
+        
+        row.classList.add('edit-mode');
+        
+        // Create input for editing
+        const input = document.createElement('input');
+        input.type = label === 'Email' ? 'email' : 
+                     label === 'Phone' ? 'tel' : 
+                     label === 'Date of Birth' ? 'text' : 'text';
+        input.value = currentValue;
+        
+        valueDiv.textContent = '';
+        valueDiv.appendChild(input);
+      });
+    }
+    
+    function cancelEdit() {
+      resetToViewMode();
+      
+      // Restore original values
+      document.getElementById('first-name').textContent = originalValues.firstName;
+      document.getElementById('last-name').textContent = originalValues.lastName;
+      document.getElementById('email').textContent = originalValues.email;
+      document.getElementById('phone').textContent = originalValues.phone;
+      document.getElementById('birth-date').textContent = originalValues.birthDate;
+    }
+    function saveChanges() {
+  const container = document.getElementById('profile-info-container');
+  const infoRows = container.querySelectorAll('.info-row');
+
+  const updatedData = {};
+
+  infoRows.forEach(row => {
+    const label = row.querySelector('.info-label').textContent.trim();
+    const input = row.querySelector('input');
+    const newValue = input ? input.value.trim() : "";
+
+    switch (label) {
+      case 'First Name':
+        updatedData.firstName = newValue;
+        break;
+      case 'Last Name':
+        updatedData.lastName = newValue;
+        break;
+      case 'Email':
+        updatedData.email = newValue;
+        break;
+      case 'Phone':
+        updatedData.phone = newValue;
+        break;
+      case 'Date of Birth':
+        updatedData.birthDate = newValue;
+        break;
+    }
+
+    row.querySelector('.info-value').textContent = newValue;
+  });
+
+  resetToViewMode();
+
+  fetch('/api/user/profile', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  },
+  body: JSON.stringify(updatedData)
+})
+.then(res => res.json())
+.then(data => {
+  if (data.message) {
+    alert('✅ Profile updated successfully');
+    localStorage.setItem('user', JSON.stringify({
+      ...JSON.parse(localStorage.getItem('user')),
+      ...updatedData
+    }));
+  } else {
+    console.error('Server error:', data.error);
+    alert(data.error || '❌ Failed to update profile');
+  }
+})
+.catch(err => {
+  console.error("❌ Error updating profile:", err);
+  alert('An error occurred while updating your profile.');
+});
+
+
+
+
+}
+
+      
+      
+      // Show a save confirmation
+      const confirmMessage = document.createElement('div');
+      confirmMessage.style.color = '#28a745';
+      confirmMessage.style.marginTop = '10px';
+      confirmMessage.style.padding = '8px';
+      confirmMessage.style.borderRadius = '4px';
+      confirmMessage.style.backgroundColor = '#d4edda';
+      confirmMessage.textContent = 'Profile information updated successfully!';
+      
+      document.getElementById('personal-info').appendChild(confirmMessage);
+      
+      setTimeout(() => {
+        confirmMessage.remove();
+      }, 3000);
+    
+    function resetToViewMode() {
+      const container = document.getElementById('profile-info-container');
+      const infoRows = container.querySelectorAll('.info-row');
+      const editButtons = document.getElementById('edit-buttons');
+      const editBtn = document.querySelector('.edit-btn');
+      
+      // Switch back to view mode
+      editBtn.style.display = 'flex';
+      editButtons.classList.add('hidden');
+      
+      infoRows.forEach(row => {
+        row.classList.remove('edit-mode');
+      });
+    }
+    
+    function logoutUser() {
+  if (confirm('Are you sure you want to log out?')) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    alert('You have been logged out successfully');
+    window.location.href = 'authP.html';
+  }
+}
+
+    
+    document.addEventListener('DOMContentLoaded', function () {
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  if (!user) {
+    // لو مفيش يوزر، يرجع لتسجيل الدخول
+    window.location.href = 'authP.html';
+    return;
+  }
+
+  // تحديث البيانات في Sidebar
+  document.querySelector('.profile-name').textContent = `${user.firstName} ${user.lastName}`;
+  document.querySelector('.profile-email').textContent = user.email;
+
+  // تحديث البيانات في صفحة المعلومات الشخصية
+  document.getElementById('first-name').textContent = user.firstName;
+  document.getElementById('last-name').textContent = user.lastName;
+  document.getElementById('email').textContent = user.email;
+  document.getElementById('phone').textContent = user.phone || 'N/A';
+  document.getElementById('birth-date').textContent = user.birthDate || 'N/A';
+});
+
+
+
+
   </script>
 
+<script>
+  const token = localStorage.getItem('token');
+async function fetchProfile() {
+  try {
+    const res = await fetch('/api/user/profile', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
 
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("❌ Server responded with error:", data);
+      throw new Error(data.error || 'Failed to fetch profile');
+    }
+
+    // Update profile fields
+    document.getElementById('first-name').textContent = data.firstName || '';
+    document.getElementById('last-name').textContent = data.lastName || '';
+    document.getElementById('email').textContent = data.email || '';
+    document.getElementById('phone').textContent = data.phone || 'N/A';
+    document.getElementById('birth-date').textContent = data.birthDate || 'N/A';
+
+    // Also update sidebar
+    document.querySelector('.profile-name').textContent = `${data.firstName} ${data.lastName}`;
+    document.querySelector('.profile-email').textContent = data.email;
+
+    // Save to localStorage for consistency
+    localStorage.setItem('user', JSON.stringify(data));
+
+  } catch (err) {
+    console.error("❌ Failed to fetch user profile:", err);
+    alert('Could not load profile. Please try again.');
+  }
+}
+
+// Optional: Call it immediately after DOMContentLoaded, if you want fresh data
+// fetchProfile();
+
+
+  function logoutUser() {
+    if (confirm('Are you sure you want to log out?')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      alert('You have been logged out successfully');
+      window.location.href = 'authP.html';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Redirect if not logged in
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user || !token) {
+      window.location.href = 'authP.html';
+      return;
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+  fetchProfile();
+
+  const profileForm = document.getElementById('profileForm');
+  if (profileForm) {
+    profileForm.addEventListener('submit', updateProfile);
+  }
+});
+
+  });
+</script>
+
+</body>
+</html>
