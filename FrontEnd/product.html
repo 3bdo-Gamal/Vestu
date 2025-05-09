@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details - Vestu</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">V<span>estu</span></div>
+
+            <div class="search-bar">
+                <input type="text" placeholder="Search for products...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="nav-icons">
+                <a id="user-link" href="authP.html" class="nav-icon">
+                    <i class="fas fa-user"></i>
+                </a>
+
+                <a href="cart.html" class="nav-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+
+        <nav>
+            <div class="container">
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html?category=denim">Denim Collection</a></li>
+                    <li><a href="products.html?category=oversized">Oversized Essentials</a></li>
+                    <li><a href="products.html?category=polo">Classic Polo</a></li>
+                    <li><a href="products.html?category=basics">Everyday Basics</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Product Detail Section -->
+    <main>
+        <section class="product-detail">
+            <div class="container">
+                <div class="product-detail-grid">
+                    <!-- Images -->
+                    <div class="product-images">
+                        <div class="main-image">
+                            <img src="" alt="Product Image">
+                        </div>
+                        <div class="thumbnail-images"></div>
+                    </div>
+
+                    <!-- Info -->
+                    <div class="product-info">
+                        <h1 class="product-name"></h1>
+                        <div class="product-category"></div>
+                        <div class="product-price"></div>
+                        <div class="product-description"></div>
+                        <div class="product-options">
+                            <div class="product-sizes">
+                                <label for="size-select">Size:</label>
+                                <select id="size-select">
+                                    <option value="">Select size</option>
+                                </select>
+                            </div>
+                            <div class="product-colors">
+                                <label for="color-select">Color:</label>
+                                <select id="color-select">
+                                    <option value="">Select color</option>
+                                </select>
+                            </div>
+                            <div class="product-quantity">
+                                <label for="quantity-input">Quantity:</label>
+                                <input type="number" id="quantity-input" value="1" min="1">
+                            </div>
+                        </div>
+                        <button id="add-to-cart" class="btn">Add to Cart</button>
+                        <div class="product-stock"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3>Shop</h3>
+                    <ul class="footer-links">
+                        <li><a href="products.html?category=denim">Denim Collection</a></li>
+                        <li><a href="products.html?category=oversized">Oversized Essentials</a></li>
+                        <li><a href="products.html?category=polo">Classic Polo</a></li>
+                        <li><a href="products.html?category=basics">Everyday Basics</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul class="footer-links">
+                        <li><a href="contact.html">Contact Us</a></li>
+                        <li><a href="faq.html">FAQs</a></li>
+                        <li><a href="shipping.html">Shipping & Returns</a></li>
+                        <li><a href="size-guide.html">Size Guide</a></li>
+                        <li><a href="track-order.html">Track Order</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>About Us</h3>
+                    <ul class="footer-links">
+                        <li><a href="about.html">Our Story</a></li>
+                        <li><a href="careers.html">Careers</a></li>
+                        <li><a href="press.html">Press</a></li>
+                        <li><a href="sustainability.html">Sustainability</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="terms.html">Terms & Conditions</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="cookies.html">Cookie Policy</a></li>
+                        <li><a href="terms-of-use.html">Terms of Use</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="copyright">
+                © 2025 Vestu. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Helper to get query parameter
+        function getQueryParam(param) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(param);
+        }
+
+        // Load product details
+        async function loadProductDetail() {
+            const id = getQueryParam('id');
+            if (!id) return;
+            try {
+                const res = await fetch(`http://localhost:3000/api/products/${id}`);
+                const product = await res.json();
+
+                // Populate text fields
+                document.querySelector('.product-name').textContent = product.name;
+                document.querySelector('.product-price').textContent = `$${product.price}`;
+                document.querySelector('.product-description').textContent = product.description;
+                document.querySelector('.product-category').textContent = product.category;
+
+                // Images
+                const mainImg = document.querySelector('.main-image img');
+                const thumbs = document.querySelector('.thumbnail-images');
+                thumbs.innerHTML = '';
+                console.log('aaaaaa', product.images);
+                
+                if (product.images && product.images.length) {
+                    mainImg.src = product.images[0];
+                    mainImg.alt = product.name;
+                    product.images.forEach(src => {
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.alt = product.name;
+                        img.className = 'thumbnail';
+                        img.addEventListener('click', () => mainImg.src = src);
+                        thumbs.appendChild(img);
+                    });
+                } else if (product.image) {
+                    mainImg.src = product.image;
+                }
+
+                // Sizes
+                const sizeSelect = document.getElementById('size-select');
+                product.sizes.forEach(size => {
+                    const opt = document.createElement('option');
+                    opt.value = size;
+                    opt.textContent = size;
+                    sizeSelect.appendChild(opt);
+                });
+
+                // Colors
+                const colorSelect = document.getElementById('color-select');
+                product.colors.forEach(color => {
+                    const opt = document.createElement('option');
+                    opt.value = color;
+                    opt.textContent = color;
+                    colorSelect.appendChild(opt);
+                });
+
+                // Stock and cart
+                const stockDiv = document.querySelector('.product-stock');
+                const addBtn = document.getElementById('add-to-cart');
+                if (product.stock > 0) {
+                    stockDiv.textContent = `${product.stock} in stock`;
+                } else {
+                    stockDiv.textContent = 'Out of stock';
+                    addBtn.disabled = true;
+                }
+
+                addBtn.addEventListener('click', () => {
+                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        size: sizeSelect.value,
+                        color: colorSelect.value,
+                        quantity: Number(document.getElementById('quantity-input').value),
+                        image: product.images[0]
+                    });
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    window.location.href = 'cart.html';
+                });
+
+                // Update cart count
+                const cartCount = JSON.parse(localStorage.getItem('cart')) || [];
+                document.getElementById('cart-count').textContent = cartCount.length;
+            } catch (err) {
+                console.error('Error loading product:', err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // User link logic
+            const user = JSON.parse(localStorage.getItem('user'));
+            document.getElementById('user-link').href = (user && user.email) ? 'profile.html' : 'authP.html';
+
+            loadProductDetail();
+        });
+    </script>
+</body>
+
+</html>
