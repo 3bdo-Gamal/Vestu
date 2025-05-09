@@ -82,10 +82,10 @@ exports.getProductsByCategory = async (req, res) => {
   }
 }
 
-exports.getAllProducts = async (req, res) => {
-  const products = await Product.find();
-  res.json(products);
-};
+// exports.getAllProducts = async (req, res) => {
+//   const products = await Product.find();
+//   res.json(products);
+// };
 
 exports.getFeaturedProducts = async (req, res) => {
   const featured = await Product.find({ isFeatured: true });
