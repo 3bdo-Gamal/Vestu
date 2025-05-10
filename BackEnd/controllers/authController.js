@@ -49,7 +49,8 @@ exports.loginUser = async (req, res) => {
         username: user.username,
         email: user.email,
         phone: user.phone || '',
-        birthDate: user.birthDate || ''
+        birthDate: user.birthDate || '',
+        role: user.role
       }
     });;
   } catch (err) {

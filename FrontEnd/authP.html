@@ -663,7 +663,7 @@ padding: 30px 20px;
   const loginForm = document.querySelector(".login-form");
   const registerForm = document.querySelector(".register-form");
 
-  // Tab toggles
+  
   loginTab.addEventListener("click", () => {
     loginTab.classList.add("active");
     registerTab.classList.remove("active");
@@ -683,7 +683,7 @@ padding: 30px 20px;
     registerTab.click();
   });
 
-  // 🔐 REGISTER FORM
+  
   registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -722,7 +722,7 @@ padding: 30px 20px;
   }
 });
 
- // 🔑 LOGIN FORM
+ 
  loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -739,12 +739,16 @@ padding: 30px 20px;
     const data = await res.json();
 
     if (res.ok) {
-      // ✅ خزّن كل البيانات
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      alert("✅ Login successful!");
-      window.location.href = "profile.html";
+      alert("✅ Login successful!"+ data.user.role);
+      
+      if (data.user.role === "admin") {
+        window.location.href = "admindashboard.html";
+      } else {
+        window.location.href = "index.html"; 
+      }
     } else {
       alert(data.error || "Login failed");
     }
