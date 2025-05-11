@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ["Denim Collection", "Oversized Essentials", "Classic Polo", "Everyday Basics"],
+    enum: ["denim", "oversized", "polo", "basics"],
     required: true
   },
   images: [{
