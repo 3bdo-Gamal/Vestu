@@ -24,17 +24,13 @@ app.use('/api/user', require('./routes/userRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
-app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/categories', require('./routes/categoryRoutes'));
 
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../FrontEnd/authP.html'));
 });
-// homepageeeeeee
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../FrontEnd/index.html'));
-});
+
 
 
 const PORT = process.env.PORT || 3000;
