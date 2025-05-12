@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema({
   },
   sizes: [{
     type: String
-  }], // ["S", "M", "L"]
+  }], 
   colors: [{
     type: String,
     enum: ["Black", "White"]
@@ -34,7 +34,7 @@ const productSchema = new mongoose.Schema({
   featured: {
     type: Boolean,
     default: false
-  }, // For homepage highlights
+  }, 
   createdAt: {
     type: Date,
     default: Date.now

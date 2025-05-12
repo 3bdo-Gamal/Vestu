@@ -295,7 +295,6 @@
       element.parentElement.classList.add('active');
     }
     
-    // New functions for edit functionality
     let originalValues = {};
     
     function toggleEditMode() {
@@ -304,7 +303,6 @@
       const editButtons = document.getElementById('edit-buttons');
       const editBtn = document.querySelector('.edit-btn');
       
-      // Save original values
       originalValues = {
         firstName: document.getElementById('first-name').textContent,
         lastName: document.getElementById('last-name').textContent,
@@ -313,7 +311,6 @@
         birthDate: document.getElementById('birth-date').textContent
       };
       
-      // Switch to edit mode
       editBtn.style.display = 'none';
       editButtons.classList.remove('hidden');
       
@@ -324,7 +321,6 @@
         
         row.classList.add('edit-mode');
         
-        // Create input for editing
         const input = document.createElement('input');
         input.type = label === 'Email' ? 'email' : 
                      label === 'Phone' ? 'tel' : 
@@ -339,7 +335,6 @@
     function cancelEdit() {
       resetToViewMode();
       
-      // Restore original values
       document.getElementById('first-name').textContent = originalValues.firstName;
       document.getElementById('last-name').textContent = originalValues.lastName;
       document.getElementById('email').textContent = originalValues.email;
@@ -413,7 +408,6 @@
 
       
       
-      // Show a save confirmation
       const confirmMessage = document.createElement('div');
       confirmMessage.style.color = '#28a745';
       confirmMessage.style.marginTop = '10px';
@@ -434,7 +428,6 @@
       const editButtons = document.getElementById('edit-buttons');
       const editBtn = document.querySelector('.edit-btn');
       
-      // Switch back to view mode
       editBtn.style.display = 'flex';
       editButtons.classList.add('hidden');
       
@@ -457,16 +450,13 @@
   const user = JSON.parse(localStorage.getItem('user'));
 
   if (!user) {
-    // لو مفيش يوزر، يرجع لتسجيل الدخول
     window.location.href = 'authP.html';
     return;
   }
 
-  // تحديث البيانات في Sidebar
   document.querySelector('.profile-name').textContent = `${user.firstName} ${user.lastName}`;
   document.querySelector('.profile-email').textContent = user.email;
 
-  // تحديث البيانات في صفحة المعلومات الشخصية
   document.getElementById('first-name').textContent = user.firstName;
   document.getElementById('last-name').textContent = user.lastName;
   document.getElementById('email').textContent = user.email;
@@ -494,18 +484,15 @@ async function fetchProfile() {
       throw new Error(data.error || 'Failed to fetch profile');
     }
 
-    // Update profile fields
     document.getElementById('first-name').textContent = data.firstName || '';
     document.getElementById('last-name').textContent = data.lastName || '';
     document.getElementById('email').textContent = data.email || '';
     document.getElementById('phone').textContent = data.phone || 'N/A';
     document.getElementById('birth-date').textContent = data.birthDate || 'N/A';
 
-    // Also update sidebar
     document.querySelector('.profile-name').textContent = `${data.firstName} ${data.lastName}`;
     document.querySelector('.profile-email').textContent = data.email;
 
-    // Save to localStorage for consistency
     localStorage.setItem('user', JSON.stringify(data));
 
   } catch (err) {
@@ -514,8 +501,7 @@ async function fetchProfile() {
   }
 }
 
-// Optional: Call it immediately after DOMContentLoaded, if you want fresh data
-// fetchProfile();
+
 
 
   function logoutUser() {
@@ -528,7 +514,6 @@ async function fetchProfile() {
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    // Redirect if not logged in
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || !token) {
       window.location.href = 'authP.html';

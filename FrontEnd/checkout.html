@@ -250,7 +250,7 @@
       const items = data.items;
       const summaryContainer = document.querySelector('.summary-items');
       const totals = document.querySelector('.summary-totals');
-      summaryContainer.innerHTML = ''; // Clear existing dummy items
+      summaryContainer.innerHTML = ''; 
 
       let subtotal = 0;
 
@@ -276,7 +276,7 @@
       });
 
       const shipping = 5.99;
-      const tax = subtotal * 0.08; // فرضًا 8%
+      const tax = subtotal * 0.08; 
       const total = subtotal + shipping + tax;
 
       totals.innerHTML = `
@@ -325,7 +325,7 @@
       .then(data => {
         if (data.orderId) {
           alert("✅ Your order has been confirmed and will arrive within 3 days.");
-          window.location.href = "index.html"; // أو أي صفحة توجيه
+          window.location.href = "index.html";
         } else {
           alert(data.message || '❌ Failed to place order.');
         }

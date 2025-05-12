@@ -773,7 +773,7 @@
   <script>
   document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
-    fetchAndRenderProducts(); // أول تحميل
+    fetchAndRenderProducts();  
   });
 
   function setupEventListeners() {
@@ -782,16 +782,12 @@
     const searchButton = document.getElementById('search-button');
     const searchInput = document.getElementById('search-input');
 
-    // عند تغيير التصنيف
     categoryFilter.addEventListener('change', fetchAndRenderProducts);
 
-    // عند تغيير الترتيب
     sortFilter.addEventListener('change', fetchAndRenderProducts);
 
-    // عند الضغط على زر البحث
     searchButton.addEventListener('click', fetchAndRenderProducts);
 
-    // عند الضغط على Enter داخل حقل البحث
     searchInput.addEventListener('keydown', function(e) {
       if (e.key === 'Enter') fetchAndRenderProducts();
     });
@@ -804,12 +800,10 @@
 
     let url = '/api/products?';
 
-    // إضافة التصنيف
     if (category !== 'all') {
       url += `category=${encodeURIComponent(category)}&`;
     }
 
-    // إضافة الترتيب
     switch (sortValue) {
       case 'price-low':
         url += 'sort=price-low-to-high&';
@@ -824,7 +818,6 @@
         break;
     }
 
-    // إضافة البحث
     if (searchQuery) {
       url += `search=${encodeURIComponent(searchQuery)}&`;
     }
@@ -915,7 +908,7 @@ function setupAddToCartButtons() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // 👈 التوكن هنا مهم
+            'Authorization': `Bearer ${token}` 
           },
           body: JSON.stringify({ productId, quantity: 1 })
         });

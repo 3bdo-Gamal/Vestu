@@ -145,13 +145,11 @@
     </footer>
 
     <script>
-    // جلب بارامتر من الرابط
     function getQueryParam(param) {
         const params = new URLSearchParams(window.location.search);
         return params.get(param);
     }
 
-    // تحميل تفاصيل المنتج
     async function loadProductDetail() {
         const id = getQueryParam('id');
         if (!id) return;
@@ -160,13 +158,11 @@
             const res = await fetch(`http://localhost:3000/api/products/${id}`);
             const product = await res.json();
 
-            // تعبئة البيانات
             document.querySelector('.product-name').textContent = product.name;
             document.querySelector('.product-price').textContent = `$${product.price}`;
             document.querySelector('.product-description').textContent = product.description;
             document.querySelector('.product-category').textContent = product.category;
 
-            // الصور
             const mainImg = document.querySelector('.main-image img');
             const thumbs = document.querySelector('.thumbnail-images');
             thumbs.innerHTML = '';
@@ -186,7 +182,6 @@
                 mainImg.src = product.image;
             }
 
-            // المقاسات
             const sizeSelect = document.getElementById('size-select');
             product.sizes.forEach(size => {
                 const opt = document.createElement('option');
@@ -195,7 +190,6 @@
                 sizeSelect.appendChild(opt);
             });
 
-            // الألوان
             const colorSelect = document.getElementById('color-select');
             product.colors.forEach(color => {
                 const opt = document.createElement('option');
@@ -204,7 +198,6 @@
                 colorSelect.appendChild(opt);
             });
 
-            // المخزون
             const stockDiv = document.querySelector('.product-stock');
             const addBtn = document.getElementById('add-to-cart');
             if (product.stock > 0) {
@@ -214,7 +207,6 @@
                 addBtn.disabled = true;
             }
 
-            // زر الإضافة إلى السلة
             addBtn.addEventListener('click', async () => {
                 const size = sizeSelect.value;
                 const color = colorSelect.value;
@@ -251,7 +243,7 @@
 
                     const result = await response.json();
                     alert(`Added to cart: ${result.message || 'Success'}`);
-                    updateCartCount(); // بعد الإضافة، تحديث عدد السلة
+                    updateCartCount(); 
                     window.location.href = 'cart.html';
                 } catch (err) {
                     console.error('Add to cart error:', err);
@@ -264,7 +256,6 @@
         }
     }
 
-    // تحديث عدد المنتجات في السلة
     async function updateCartCount() {
         const token = localStorage.getItem('token');
         if (!token) return;
@@ -283,9 +274,7 @@
         }
     }
 
-    // عند تحميل الصفحة
     window.addEventListener('DOMContentLoaded', () => {
-        // الرابط الخاص بالمستخدم
         const user = JSON.parse(localStorage.getItem('user'));
         document.getElementById('user-link').href = (user && user.email) ? 'profile.html' : 'authP.html';
 

@@ -207,14 +207,11 @@
     const userLink = document.getElementById("user-link");
 
     if (user) {
-        // لو المستخدم مسجل دخول، نوجهه لصفحة البروفايل
         userLink.href = "profile.html";
     } else {
-        // لو مش مسجل دخول، يبقى يروح للوج ان
         userLink.href = "authP.html";
     }
 
-    // تحميل المنتجات والفئات
     loadFeaturedProducts();
     loadCategories();
 });

@@ -1,4 +1,4 @@
-// controllers/orderController.js
+
 const Order = require('../models/Order');
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
@@ -31,7 +31,7 @@ exports.createOrder = async (req, res) => {
 
     await order.save();
 
-    // Optionally clear cart
+
     await Cart.findOneAndUpdate({ user: userId }, { items: [] });
 
     res.status(201).json({ message: 'Order placed successfully', orderId: order._id });

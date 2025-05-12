@@ -736,7 +736,6 @@ fetch("/api/cart/items", {
     console.error("Failed to load cart data:", err);
   });
 
-    // عرض العناصر
    function renderCartItems(items) {
   cartItemsContainer.innerHTML = "";
 
@@ -779,7 +778,6 @@ cartItem.dataset.productId = product._id;
   bindCartEvents();
 }
 
-    // ربط الأحداث
     function bindCartEvents() {
       document.querySelectorAll(".cart-item").forEach(item => {
         const decreaseBtn = item.querySelector(".decrease");
@@ -820,7 +818,7 @@ cartItem.dataset.productId = product._id;
       return res.json();
     })
     .then(data => {
-      item.remove(); // شيل من الواجهة بعد ما يتشال من الـ DB
+      item.remove(); 
       updateCart();
       checkIfCartEmpty();
     })
@@ -837,7 +835,6 @@ cartItem.dataset.productId = product._id;
       });
     }
 
-    // تحديث الأسعار
     function updateCart() {
       let subtotal = 0;
       let shipping = 5.00;
@@ -850,7 +847,6 @@ cartItem.dataset.productId = product._id;
         itemCount += quantity;
       });
 
-      // الخصم
       let discount = 0;
       if (appliedPromo) {
         const promoValue = promoCodes[appliedPromo];
@@ -867,7 +863,6 @@ cartItem.dataset.productId = product._id;
       totalElem.textContent = `$${total.toFixed(2)}`;
     }
 
-    // التحقق من أن الكارت فارغ
     function checkIfCartEmpty() {
       const remainingItems = document.querySelectorAll(".cart-item").length;
       if (remainingItems === 0) {
@@ -876,7 +871,6 @@ cartItem.dataset.productId = product._id;
       }
     }
 
-    // تطبيق كود الخصم
     applyPromoForm.addEventListener("submit", function (e) {
       e.preventDefault();
       const code = promoInput.value.trim().toUpperCase();
@@ -890,7 +884,6 @@ cartItem.dataset.productId = product._id;
       }
     });
 
-    // زر الشراء
     checkoutBtn.addEventListener("click", () => {
       const totalAmount = totalElem.textContent;
       alert(`Proceeding to checkout. Total amount: ${totalAmount}`);

@@ -1077,45 +1077,46 @@
   </footer>
 
   <!-- JavaScript -->
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
+<script>
+document.addEventListener('DOMContentLoaded', () => {
   const token = localStorage.getItem('token');
-  const headers = {
-    'Authorization': `Bearer ${token}`
-  };
+  const headers = { 'Authorization': `Bearer ${token}` };
 
-  // Mobile menu toggle
   const menuToggle = document.querySelector('.menu-toggle');
   const navLinks = document.querySelector('.nav-links');
-
-  if (menuToggle && navLinks) {
-    menuToggle.addEventListener('click', function () {
-      navLinks.classList.toggle('active');
-    });
-  }
-
-  // Tab switching logic
   const tabs = document.querySelectorAll('.admin-tab');
   const tabContents = document.querySelectorAll('.admin-tab-content');
 
+  
+  if (menuToggle && navLinks) {
+    menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+  }
+
+  
   tabs.forEach(tab => {
-    tab.addEventListener('click', function () {
+    tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
-      this.classList.add('active');
-      tabContents.forEach(content => content.classList.remove('active'));
-      const tabId = this.getAttribute('data-tab');
+      tab.classList.add('active');
+      tabContents.forEach(c => c.classList.remove('active'));
+      const tabId = tab.getAttribute('data-tab');
       document.getElementById(tabId).classList.add('active');
     });
   });
 
-  // Fetch and render products
+ 
+  loadProducts();
+  loadUsers();
+  loadOrders();
+
+  /** ---------- PRODUCTS ---------- */
   async function loadProducts() {
     try {
       const res = await fetch('/api/admin/products', { headers });
       const products = await res.json();
-      const productTable = document.querySelector('.product-table tbody');
-      productTable.innerHTML = '';
-      products.forEach((product, index) => {
+      const table = document.querySelector('.product-table tbody');
+      table.innerHTML = '';
+
+      products.forEach(product => {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${product._id}</td>
@@ -1123,36 +1124,34 @@
           <td>${product.category}</td>
           <td>$${product.price}</td>
           <td>${product.stock}</td>
-          <td><span class="${product.featured ? 'featured-check' : 'featured-dash'}">${product.featured ? '✓' : '-'}</span></td>
-          <td class="actions">
+          <td>${product.featured ? '✓' : '-'}</td>
+          <td>
             <a href="#" class="edit-btn">Edit</a>
             <a href="#" class="delete-btn">Delete</a>
           </td>
         `;
-        productTable.appendChild(row);
+        table.appendChild(row);
+
         row.querySelector('.delete-btn').addEventListener('click', () => deleteProduct(product._id));
-        row.querySelector('.edit-btn').addEventListener('click', () => editProduct(product));
+        row.querySelector('.edit-btn').addEventListener('click', () => populateProductForm(product));
       });
     } catch (err) {
-      console.error('Failed to load products:', err);
+      console.error('Error loading products:', err);
     }
   }
 
-  async function deleteProduct(productId) {
-    if (!confirm('Are you sure you want to delete this product?')) return;
+  async function deleteProduct(id) {
+    if (!confirm('Delete this product?')) return;
     try {
-      await fetch(`/api/admin/products/${productId}`, {
-        method: 'DELETE',
-        headers
-      });
-      alert('Product deleted');
+      await fetch(`/api/admin/products/${id}`, { method: 'DELETE', headers });
+      alert('Product deleted.');
       loadProducts();
     } catch (err) {
-      alert('Failed to delete product');
+      alert('Failed to delete product.');
     }
   }
 
-  function editProduct(product) {
+  function populateProductForm(product) {
     document.querySelector('[data-tab="add-product"]').click();
     document.getElementById('product-name').value = product.name;
     document.getElementById('product-category').value = product.category;
@@ -1160,105 +1159,126 @@
     document.getElementById('product-stock').value = product.stock;
     document.getElementById('product-featured').value = product.featured ? 'true' : 'false';
     document.getElementById('product-description').value = product.description;
-    const submitBtn = document.querySelector('.admin-form-submit');
-    submitBtn.textContent = 'Update Product';
-    submitBtn.dataset.editId = product._id;
+    const btn = document.querySelector('.admin-form-submit');
+    btn.textContent = 'Update Product';
+    btn.dataset.editId = product._id;
   }
 
-  const addProductForm = document.getElementById('product-form');
-  if (addProductForm) {
-    addProductForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
+  const productForm = document.getElementById('product-form');
+  productForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(productForm);
+    const isEdit = productForm.querySelector('.admin-form-submit').dataset.editId;
+    const url = isEdit ? `/api/admin/products/${isEdit}` : '/api/admin/products';
+    const method = isEdit ? 'PUT' : 'POST';
 
-      const formData = new FormData();
-      formData.append('name', document.getElementById('product-name').value);
-      formData.append('category', document.getElementById('product-category').value);
-      formData.append('price', document.getElementById('product-price').value);
-      formData.append('stock', document.getElementById('product-stock').value);
-      formData.append('featured', document.getElementById('product-featured').value);
-      formData.append('description', document.getElementById('product-description').value);
-
-      const imageFiles = document.getElementById('product-images').files;
-      for (let i = 0; i < imageFiles.length; i++) {
-        formData.append('images', imageFiles[i]);
-      }
-
-      const isEdit = this.querySelector('.admin-form-submit').dataset.editId;
-      const url = isEdit ? `/api/admin/products/${isEdit}` : '/api/admin/products';
-      const method = isEdit ? 'PUT' : 'POST';
-
-      try {
-        await fetch(url, {
-          method,
-          headers: { 'Authorization': `Bearer ${token}` },
-          body: formData
-        });
-        alert(`Product ${isEdit ? 'updated' : 'added'} successfully!`);
-        this.reset();
-        loadProducts();
-        document.querySelector('[data-tab="products"]').click();
-      } catch (err) {
-        alert(`Failed to ${isEdit ? 'update' : 'add'} product`);
-      }
-    });
-  }
-
-  // Edit order status functionality
-  const editStatusButtons = document.querySelectorAll('.edit-status-btn');
-  editStatusButtons.forEach(button => {
-    button.addEventListener('click', function (e) {
-      e.preventDefault();
-      const row = this.closest('tr');
-      const orderId = row.querySelector('td').textContent;
-      const statusCell = row.querySelector('.order-status');
-      const currentStatus = statusCell.textContent;
-      const statusOptions = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
-      const statusSelect = document.createElement('select');
-      statusSelect.className = 'status-select';
-      statusOptions.forEach(status => {
-        const option = document.createElement('option');
-        option.value = status;
-        option.textContent = status;
-        if (status === currentStatus) option.selected = true;
-        statusSelect.appendChild(option);
+    try {
+      await fetch(url, {
+        method,
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData,
       });
-
-      const saveButton = document.createElement('button');
-      saveButton.textContent = 'Save';
-      saveButton.className = 'status-save-btn';
-
-      const statusContainer = document.createElement('div');
-      statusContainer.appendChild(statusSelect);
-      statusContainer.appendChild(saveButton);
-
-      const originalContent = statusCell.innerHTML;
-      statusCell.innerHTML = '';
-      statusCell.appendChild(statusContainer);
-
-      saveButton.addEventListener('click', async function () {
-        const newStatus = statusSelect.value;
-        try {
-          await fetch(`/api/admin/orders/${orderId}/status`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ status: newStatus })
-          });
-          alert('Order status updated');
-          statusCell.innerHTML = `<span class="order-status status-${newStatus}">${newStatus}</span>`;
-        } catch (err) {
-          alert('Failed to update order status');
-          statusCell.innerHTML = originalContent;
-        }
-      });
-    });
+      alert(`Product ${isEdit ? 'updated' : 'added'} successfully`);
+      productForm.reset();
+      document.querySelector('[data-tab="products"]').click();
+      loadProducts();
+    } catch (err) {
+      alert(`Failed to ${isEdit ? 'update' : 'add'} product`);
+    }
   });
 
-  // Initial load
-  loadProducts();
+  /** ---------- USERS ---------- */
+  async function loadUsers() {
+    try {
+      const res = await fetch('/api/admin/users', { headers });
+      const users = await res.json();
+      const table = document.querySelector('.user-table tbody');
+      if (!table) return;
+
+      table.innerHTML = '';
+      users.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${user._id}</td>
+          <td>${user.firstName} ${user.lastName}</td>
+          <td>${user.email}</td>
+          <td>${user.role}</td>
+        `;
+        table.appendChild(row);
+      });
+    } catch (err) {
+      console.error('Error loading users:', err);
+    }
+  }
+
+  /** ---------- ORDERS ---------- */
+  async function loadOrders() {
+    try {
+      const res = await fetch('/api/admin/orders', { headers });
+      const orders = await res.json();
+      const table = document.querySelector('.order-table tbody');
+      if (!table) return;
+
+      table.innerHTML = '';
+      orders.forEach(order => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${order._id}</td>
+          <td>${order.user?.email || 'Unknown'}</td>
+          <td class="order-status">${order.status}</td>
+          <td>
+            <button class="edit-status-btn">Edit</button>
+          </td>
+        `;
+        table.appendChild(row);
+        row.querySelector('.edit-status-btn').addEventListener('click', () => editOrderStatus(row, order._id, order.status));
+      });
+    } catch (err) {
+      console.error('Error loading orders:', err);
+    }
+  }
+
+  function editOrderStatus(row, orderId, currentStatus) {
+    const statusCell = row.querySelector('.order-status');
+    const select = document.createElement('select');
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = 'Save';
+    const statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+
+    statuses.forEach(status => {
+      const option = document.createElement('option');
+      option.value = status;
+      option.textContent = status;
+      if (status === currentStatus) option.selected = true;
+      select.appendChild(option);
+    });
+
+    const container = document.createElement('div');
+    container.appendChild(select);
+    container.appendChild(saveBtn);
+    statusCell.innerHTML = '';
+    statusCell.appendChild(container);
+
+    saveBtn.addEventListener('click', async () => {
+      try {
+        await fetch(`/api/admin/orders/${orderId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: select.value }),
+        });
+        alert('Order status updated');
+        loadOrders();
+      } catch (err) {
+        alert('Failed to update order status');
+      }
+    });
+  }
 });
-  </script>
+</script>
+
+
 </body>
 </html>

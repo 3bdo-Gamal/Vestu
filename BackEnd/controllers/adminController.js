@@ -1,11 +1,9 @@
-// controllers/adminController.js
 
 const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 
 
-// Product Management
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
@@ -84,7 +82,6 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
-// User Management
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find()
@@ -98,7 +95,6 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Order Management
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
@@ -117,7 +113,6 @@ exports.updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
     
-    // Validate status
     if (!['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(status)) {
       return res.status(400).json({ error: 'Invalid status' });
     }

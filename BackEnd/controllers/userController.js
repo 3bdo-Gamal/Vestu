@@ -18,7 +18,6 @@ exports.updateUserProfile = async (req, res) => {
 
     const { firstName, lastName, email, phone, birthDate, password } = req.body;
 
-    // التحقق من البيانات المرسلة وتحديثها إذا كانت موجودة
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (email) user.email = email;

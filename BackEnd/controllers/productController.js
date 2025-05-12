@@ -1,18 +1,18 @@
 
-// controllers/productController.js
+
 
 const Product = require('../models/Product');
 
 exports.getAllProducts = async (req, res) => {
   try {
-    // Support filtering by category
+
     const { category, featured, search, sort } = req.query; // إضافة sort هنا
     const filter = {};
 
     if (category) filter.category = category;
     if (featured === 'true') filter.featured = true;
 
-    // Search functionality
+ 
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: 'i' } },
@@ -20,16 +20,16 @@ exports.getAllProducts = async (req, res) => {
       ];
     }
 
-    // Sorting functionality based on price
-    let sortCriteria = { createdAt: -1 };  // Default sorting by creation date
+    
+    let sortCriteria = { createdAt: -1 };  
     if (sort === 'price-low-to-high') {
-      sortCriteria = { price: 1 };  // Sorting by price ascending
+      sortCriteria = { price: 1 };  
     } else if (sort === 'price-high-to-low') {
-      sortCriteria = { price: -1 };  // Sorting by price descending
+      sortCriteria = { price: -1 };  
     }
 
     const products = await Product.find(filter)
-      .sort(sortCriteria); // استخدام sortCriteria بناءً على الـ query
+      .sort(sortCriteria); 
 
     res.json(products);
   } catch (err) {
@@ -82,6 +82,7 @@ exports.getProductsByCategory = async (req, res) => {
   }
 }
 
+//مين عمل كومنت لدول ؟؟؟
 // exports.getAllProducts = async (req, res) => {
 //   const products = await Product.find();
 //   res.json(products);

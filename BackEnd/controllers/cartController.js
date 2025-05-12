@@ -1,7 +1,7 @@
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 
-// ✅ جلب الكارت
+
 exports.getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
@@ -14,7 +14,7 @@ exports.getCart = async (req, res) => {
   }
 };
 
-// ✅ إضافة أو تحديث منتج في الكارت
+
 exports.addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
@@ -54,7 +54,7 @@ exports.addToCart = async (req, res) => {
   }
 };
 
-// ✅ إزالة منتج من الكارت
+
 exports.removeFromCart = async (req, res) => {
   try {
     const { productId } = req.body;
