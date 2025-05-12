@@ -1,17 +1,9 @@
-// routes/orderRoutes.js
-
+// routes/order.route.js
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/authMiddleware');
-const orderController = require('../controllers/orderController');
+const { createOrder } = require('../controllers/orderController');
+const protect = require('../middleware/authMiddleware');
 
-// All routes require authentication
-router.use(auth);
-
-// Order management for users
-router.get('/user', orderController.getUserOrders);
-router.post('/', orderController.createOrder);
-router.get('/:id', orderController.getOrderDetail);
-router.post('/:id/cancel', orderController.cancelOrder);
+router.post('/create', protect, createOrder);
 
 module.exports = router;

@@ -611,6 +611,18 @@
               <span id="total-price">$0.00</span>
             </div>
             <button class="checkout-btn">Proceed to Checkout</button>
+
+            <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const checkoutBtn = document.querySelector(".checkout-btn");
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener("click", () => {
+        window.location.href = "checkout.html";
+      });
+    }
+  });
+</script>
+
             <a href="products.html" class="continue-shopping">&larr; Continue Shopping</a>
             <div class="promo-code">
               <h3>Have a promo code?</h3>
@@ -882,7 +894,7 @@ cartItem.dataset.productId = product._id;
     checkoutBtn.addEventListener("click", () => {
       const totalAmount = totalElem.textContent;
       alert(`Proceeding to checkout. Total amount: ${totalAmount}`);
-      // window.location.href = "checkout.html";
+       window.location.href = "checkout.html";
     });
   });
 </script>
