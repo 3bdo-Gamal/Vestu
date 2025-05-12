@@ -145,106 +145,155 @@
     </footer>
 
     <script>
-        // Helper to get query parameter
-        function getQueryParam(param) {
-            const params = new URLSearchParams(window.location.search);
-            return params.get(param);
-        }
+    // جلب بارامتر من الرابط
+    function getQueryParam(param) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(param);
+    }
 
-        // Load product details
-        async function loadProductDetail() {
-            const id = getQueryParam('id');
-            if (!id) return;
-            try {
-                const res = await fetch(`http://localhost:3000/api/products/${id}`);
-                const product = await res.json();
+    // تحميل تفاصيل المنتج
+    async function loadProductDetail() {
+        const id = getQueryParam('id');
+        if (!id) return;
 
-                // Populate text fields
-                document.querySelector('.product-name').textContent = product.name;
-                document.querySelector('.product-price').textContent = `$${product.price}`;
-                document.querySelector('.product-description').textContent = product.description;
-                document.querySelector('.product-category').textContent = product.category;
+        try {
+            const res = await fetch(`http://localhost:3000/api/products/${id}`);
+            const product = await res.json();
 
-                // Images
-                const mainImg = document.querySelector('.main-image img');
-                const thumbs = document.querySelector('.thumbnail-images');
-                thumbs.innerHTML = '';
-                console.log('aaaaaa', product.images);
-                
-                if (product.images && product.images.length) {
-                    mainImg.src = product.images[0];
-                    mainImg.alt = product.name;
-                    product.images.forEach(src => {
-                        const img = document.createElement('img');
-                        img.src = src;
-                        img.alt = product.name;
-                        img.className = 'thumbnail';
-                        img.addEventListener('click', () => mainImg.src = src);
-                        thumbs.appendChild(img);
-                    });
-                } else if (product.image) {
-                    mainImg.src = product.image;
-                }
+            // تعبئة البيانات
+            document.querySelector('.product-name').textContent = product.name;
+            document.querySelector('.product-price').textContent = `$${product.price}`;
+            document.querySelector('.product-description').textContent = product.description;
+            document.querySelector('.product-category').textContent = product.category;
 
-                // Sizes
-                const sizeSelect = document.getElementById('size-select');
-                product.sizes.forEach(size => {
-                    const opt = document.createElement('option');
-                    opt.value = size;
-                    opt.textContent = size;
-                    sizeSelect.appendChild(opt);
+            // الصور
+            const mainImg = document.querySelector('.main-image img');
+            const thumbs = document.querySelector('.thumbnail-images');
+            thumbs.innerHTML = '';
+
+            if (product.images && product.images.length) {
+                mainImg.src = product.images[0];
+                mainImg.alt = product.name;
+                product.images.forEach(src => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = product.name;
+                    img.className = 'thumbnail';
+                    img.addEventListener('click', () => mainImg.src = src);
+                    thumbs.appendChild(img);
                 });
-
-                // Colors
-                const colorSelect = document.getElementById('color-select');
-                product.colors.forEach(color => {
-                    const opt = document.createElement('option');
-                    opt.value = color;
-                    opt.textContent = color;
-                    colorSelect.appendChild(opt);
-                });
-
-                // Stock and cart
-                const stockDiv = document.querySelector('.product-stock');
-                const addBtn = document.getElementById('add-to-cart');
-                if (product.stock > 0) {
-                    stockDiv.textContent = `${product.stock} in stock`;
-                } else {
-                    stockDiv.textContent = 'Out of stock';
-                    addBtn.disabled = true;
-                }
-
-                addBtn.addEventListener('click', () => {
-                    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-                    cart.push({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        size: sizeSelect.value,
-                        color: colorSelect.value,
-                        quantity: Number(document.getElementById('quantity-input').value),
-                        image: product.images[0]
-                    });
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                    window.location.href = 'cart.html';
-                });
-
-                // Update cart count
-                const cartCount = JSON.parse(localStorage.getItem('cart')) || [];
-                document.getElementById('cart-count').textContent = cartCount.length;
-            } catch (err) {
-                console.error('Error loading product:', err);
+            } else if (product.image) {
+                mainImg.src = product.image;
             }
+
+            // المقاسات
+            const sizeSelect = document.getElementById('size-select');
+            product.sizes.forEach(size => {
+                const opt = document.createElement('option');
+                opt.value = size;
+                opt.textContent = size;
+                sizeSelect.appendChild(opt);
+            });
+
+            // الألوان
+            const colorSelect = document.getElementById('color-select');
+            product.colors.forEach(color => {
+                const opt = document.createElement('option');
+                opt.value = color;
+                opt.textContent = color;
+                colorSelect.appendChild(opt);
+            });
+
+            // المخزون
+            const stockDiv = document.querySelector('.product-stock');
+            const addBtn = document.getElementById('add-to-cart');
+            if (product.stock > 0) {
+                stockDiv.textContent = `${product.stock} in stock`;
+            } else {
+                stockDiv.textContent = 'Out of stock';
+                addBtn.disabled = true;
+            }
+
+            // زر الإضافة إلى السلة
+            addBtn.addEventListener('click', async () => {
+                const size = sizeSelect.value;
+                const color = colorSelect.value;
+                const quantity = Number(document.getElementById('quantity-input').value);
+
+                if (!size || !color) {
+                    alert('Please select size and color.');
+                    return;
+                }
+
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('You must be logged in to add products to the cart.');
+                    window.location.href = 'authP.html';
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/api/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            productId: product.id || product._id,
+                            size,
+                            color,
+                            quantity
+                        })
+                    });
+
+                    if (!response.ok) throw new Error(`Status: ${response.status}`);
+
+                    const result = await response.json();
+                    alert(`Added to cart: ${result.message || 'Success'}`);
+                    updateCartCount(); // بعد الإضافة، تحديث عدد السلة
+                    window.location.href = 'cart.html';
+                } catch (err) {
+                    console.error('Add to cart error:', err);
+                    alert('Failed to add product to cart.');
+                }
+            });
+
+        } catch (err) {
+            console.error('Error loading product:', err);
         }
+    }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            // User link logic
-            const user = JSON.parse(localStorage.getItem('user'));
-            document.getElementById('user-link').href = (user && user.email) ? 'profile.html' : 'authP.html';
+    // تحديث عدد المنتجات في السلة
+    async function updateCartCount() {
+        const token = localStorage.getItem('token');
+        if (!token) return;
 
-            loadProductDetail();
-        });
-    </script>
+        try {
+            const res = await fetch('/api/cart', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!res.ok) throw new Error();
+            const cartData = await res.json();
+            document.getElementById('cart-count').textContent = cartData.items?.length || 0;
+        } catch (e) {
+            console.warn('Could not update cart count');
+        }
+    }
+
+    // عند تحميل الصفحة
+    window.addEventListener('DOMContentLoaded', () => {
+        // الرابط الخاص بالمستخدم
+        const user = JSON.parse(localStorage.getItem('user'));
+        document.getElementById('user-link').href = (user && user.email) ? 'profile.html' : 'authP.html';
+
+        loadProductDetail();
+        updateCartCount();
+    });
+</script>
+
 </body>
 
 </html>
